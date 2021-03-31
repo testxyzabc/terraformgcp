@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      volumes:
+      - name: nginx-pv-storage
+        persistentVolumeClaim:
+          claimName: nginx-pv-claim
+      - name: nginx-pv-storage-css
+        persistentVolumeClaim:
+          claimName: nginx-pv-css-claim
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: nginx-pv-storage
+        - mountPath: "/usr/share/nginx/css"
+          name: nginx-pv-storage-css
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  labels:
+    app: nginx-svc
+spec:
+  ports:
+  - port: 5679
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: nginx
