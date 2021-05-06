@@ -1,0 +1,10 @@
+
+provider "google" {
+  project = "gcplayproject"
+}
+
+resource "google_project_iam_member" "project" {
+  project = "gcplayproject"
+  role    = "roles/editor"
+  member  = "group:info@talktotechie.com"
+}
